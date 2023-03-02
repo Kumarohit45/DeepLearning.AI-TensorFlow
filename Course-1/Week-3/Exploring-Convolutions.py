@@ -33,7 +33,22 @@ for x in range(1, size_x-1):
         image_transformed[x, y] = convolution
 
 
+
+new_x = int(size_x/2)
+new_y = int(size_y/2)
+new_image = np.zeros((new_x, new_y))
+for x in range(0, size_x, 2):
+    for y in range(0, size_y, 2):
+        pixels=[]
+        pixels.append(image_transformed[x, y])
+        pixels.append(image_transformed[x+1, y])
+        pixels.append(image_transformed[x, y+1])
+        pixels.append(image_transformed[x+1, y+1])
+
+        new_image[int(x/2), int(y/2)] = max(pixels)
+
+
 plt.grid(False)
 plt.gray()
-plt.imshow(image_transformed)
+plt.imshow(new_image)
 plt.show()
