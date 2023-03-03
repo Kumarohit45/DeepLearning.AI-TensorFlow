@@ -4,13 +4,11 @@ import tensorflow as tf
 from tensorflow import keras
 
 mnist = tf.keras.datasets.mnist
-(training_images, training_labels) = mnist.load_data()
-print(type(training_images))
-timages = np.asarray(training_images)
-print(type(timages))
-timages = timages.reshape(60000, 28, 28, 1)
+(training_images, training_labels), _ = mnist.load_data()
 
-timages = timages / 255.0
+training_images = training_images.reshape(60000, 28, 28, 1)
+
+training_images = training_images / 255.0
 
 class myCallback(tf.keras.callbacks.Callback):
   def on_epoch_end(self, epoch, logs={}):
@@ -31,4 +29,4 @@ model = tf.keras.models.Sequential([
 
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-model.fit(timages, training_labels, epochs=20, callbacks=[callbacks])
+model.fit(training_images, training_labels, epochs=20, callbacks=[callbacks])
