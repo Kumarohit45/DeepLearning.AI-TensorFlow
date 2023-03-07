@@ -2,9 +2,9 @@
 # Extracting the Zip File (The Cats and Dogs Dataset)
 import zipfile
 
-local_zip = './cats_and_dogs_filtered.zip'  # Mention the Directory Path
-zip_ref = zipfile.ZipFile(local_zip, 'r')  # Read the Zip File
-zip_ref.extractall()  # Extract all the contents of the Zip File
+local_zip = './cats_and_dogs_filtered.zip'                          # Mention the Directory Path
+zip_ref = zipfile.ZipFile(local_zip, 'r')                           # Read the Zip File
+zip_ref.extractall()                                                # Extract all the contents of the Zip File
 
 zip_ref.close()
 
@@ -79,7 +79,7 @@ next_dog_pix = [os.path.join(train_dogs_dir, fname)
 
 for i, img_path in enumerate(next_cat_pix + next_dog_pix):
     sp = plt.subplot(nrows, ncols, i + 1)
-    sp.axis('off')  # Don't show axes (or gridlines)
+    sp.axis('off')                                                  # Don't show axes (or gridlines)
 
     img = mpimg.imread(img_path)
     plt.imshow(img)
