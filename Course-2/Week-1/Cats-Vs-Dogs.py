@@ -2,9 +2,9 @@
 # Extracting the Zip File (The Cats and Dogs Dataset)
 import zipfile
 
-local_zip = './cats_and_dogs_filtered.zip'                          # Mention the Directory Path
-zip_ref = zipfile.ZipFile(local_zip, 'r')                           # Read the Zip File
-zip_ref.extractall()                                                # Extract all the contents of the Zip File
+local_zip = './cats_and_dogs_filtered.zip'  # Mention the Directory Path
+zip_ref = zipfile.ZipFile(local_zip, 'r')  # Read the Zip File
+zip_ref.extractall()  # Extract all the contents of the Zip File
 
 zip_ref.close()
 
@@ -79,7 +79,7 @@ next_dog_pix = [os.path.join(train_dogs_dir, fname)
 
 for i, img_path in enumerate(next_cat_pix + next_dog_pix):
     sp = plt.subplot(nrows, ncols, i + 1)
-    sp.axis('off')                                                  # Don't show axes (or gridlines)
+    sp.axis('off')  # Don't show axes (or gridlines)
 
     img = mpimg.imread(img_path)
     plt.imshow(img)
@@ -148,8 +148,30 @@ validation_generator = test_datagen.flow_from_directory(validation_dir,
 
 # Train the Model
 history = model.fit(train_generator,
-                    epochs=20,
+                    epochs=15,
                     validation_data=validation_generator,
                     verbose=2)
 
 # Model Prediction
+import numpy as np
+from tensorflow.keras.utils import load_img, img_to_array
+
+images = os.listdir('./cats')
+
+print(images)
+
+for i in images:
+    print()
+    path = './cats/' + i
+    img = load_img(path, target_size=(150, 150))
+    x = img_to_array(img)
+    x /= 255
+    x = np.expand_dims(x, axis=0)
+
+    images = np.vstack([x])
+    classes = model.predict(images, batch_size=10)
+    print(classes[0])
+    if classes[0] > 0.5:
+        print(i + ' is a dog.')
+    else:
+        print(i + ' is a cat.')
