@@ -58,6 +58,10 @@ print(f'Total number of Cat Images in Validation Directory : {len(os.listdir(val
 print(f'Total number of Dog Images in Validation Directory : {len(os.listdir(validation_dogs_dir))}')
 
 # Configure the matplotlib parameter
+import matplotlib
+import random
+
+matplotlib.use('tkagg')
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
@@ -70,7 +74,7 @@ pic_index = 0
 fig = plt.gcf()
 fig.set_size_inches(ncols * 4, nrows * 4)
 
-pic_index += 8
+pic_index = pic_index + 8
 
 next_cat_pix = [os.path.join(train_cats_dir, fname)
                 for fname in train_cats_fnames[pic_index - 8:pic_index]]
@@ -81,6 +85,7 @@ for i, img_path in enumerate(next_cat_pix + next_dog_pix):
     sp = plt.subplot(nrows, ncols, i + 1)
     sp.axis('off')  # Don't show axes (or gridlines)
 
+    # img_path = random.choice(next_cat_pix + next_dog_pix)
     img = mpimg.imread(img_path)
     plt.imshow(img)
 
@@ -148,7 +153,7 @@ validation_generator = test_datagen.flow_from_directory(validation_dir,
 
 # Train the Model
 history = model.fit(train_generator,
-                    epochs=15,
+                    epochs=20,
                     validation_data=validation_generator,
                     verbose=2)
 
@@ -177,8 +182,6 @@ for i in images:
         print(i + ' is a cat.')
 
 # Visualizing Intermediate Representations
-import random
-
 successive_outputs = [layer.output for layer in model.layers]
 visualization_model = tf.keras.models.Model(inputs=model.input, outputs=successive_outputs)
 
@@ -217,6 +220,8 @@ for layer_name, feature_map in zip(layer_names, successive_feature_maps):
         plt.grid(False)
         plt.imshow(display_grid, aspect='auto', cmap='viridis')
 
+plt.show()
+
 # Evaluating Accuracy and Loss for the Model
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
@@ -228,9 +233,9 @@ epochs = range(len(acc))
 plt.plot(epochs, acc)
 plt.plot(epochs, val_acc)
 plt.title('Training and Validation Accuracy')
-plt.figure()
+plt.show()
 
 plt.plot(epochs, loss)
 plt.plot(epochs, val_loss)
 plt.title('Training and Validation Loss')
-plt.figure()
+plt.show()
