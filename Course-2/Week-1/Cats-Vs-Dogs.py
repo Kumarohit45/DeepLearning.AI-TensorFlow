@@ -175,3 +175,62 @@ for i in images:
         print(i + ' is a dog.')
     else:
         print(i + ' is a cat.')
+
+# Visualizing Intermediate Representations
+import random
+
+successive_outputs = [layer.output for layer in model.layers]
+visualization_model = tf.keras.models.Model(inputs=model.input, outputs=successive_outputs)
+
+cat_img_files = [os.path.join(train_cats_dir, f) for f in train_cats_fnames]
+dog_img_files = [os.path.join(train_dogs_dir, f) for f in train_dogs_fnames]
+
+img_path = random.choice(cat_img_files + dog_img_files)
+img = load_img(img_path, target_size=(150, 150))
+x = img_to_array(img)
+x = x.reshape((1,) + x.shape)
+
+x = x / 255.0
+
+successive_feature_maps = visualization_model.predict(x)
+
+layer_names = [layer.name for layer in model.layers]
+
+for layer_name, feature_map in zip(layer_names, successive_feature_maps):
+    if len(feature_map.shape) == 4:
+        n_features = feature_map.shape[-1]
+        size = feature_map.shape[1]
+        display_grid = np.zeros((size, size * n_features))
+        for i in range(n_features):
+            np.seterr(invalid='ignore')
+            x = feature_map[0, :, :, i]
+            x -= x.mean()
+            x /= x.std()
+            x *= 64
+            x += 128
+            x = np.clip(x, 0, 255).astype('uint8')
+            display_grid[:, i * size: (i + 1) * size] = x
+
+        scale = 20. / n_features
+        plt.figure(figsize=(scale * n_features, scale))
+        plt.title(layer_name)
+        plt.grid(False)
+        plt.imshow(display_grid, aspect='auto', cmap='viridis')
+
+# Evaluating Accuracy and Loss for the Model
+acc = history.history['accuracy']
+val_acc = history.history['val_accuracy']
+loss = history.history['loss']
+val_loss = history.history['val_loss']
+
+epochs = range(len(acc))
+
+plt.plot(epochs, acc)
+plt.plot(epochs, val_acc)
+plt.title('Training and Validation Accuracy')
+plt.figure()
+
+plt.plot(epochs, loss)
+plt.plot(epochs, val_loss)
+plt.title('Training and Validation Loss')
+plt.figure()
